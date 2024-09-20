@@ -128,7 +128,7 @@ def main():
                                 second_letter_column,
                                 "decrypt",
                             )
-                            print(plain_text)
+                            # print(plain_text)
                         elif first_letter_row == second_letter_row:
                             # print("hello")
                             plain_text += same_row(
@@ -138,7 +138,7 @@ def main():
                                 second_letter_column,
                                 "decrypt",
                             )
-                            print(plain_text)
+                            # print(plain_text)
                         else:
                             # print("hello")
                             plain_text += different_pos(
@@ -147,7 +147,7 @@ def main():
                                 second_letter_row,
                                 second_letter_column,
                             )
-                            print(plain_text)
+                            # print(plain_text)
 
             remove_x = input(
                 "(Not Recommended) Do you want to remove x? Yes(y) or No(n)\n"
@@ -277,7 +277,7 @@ def make_diagram(text):
                 break
             except IndexError:
                 break
-    print(diagram)
+    # print(diagram)
     return diagram
 
 
