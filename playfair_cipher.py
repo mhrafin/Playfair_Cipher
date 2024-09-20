@@ -20,6 +20,7 @@ def main():
 
     while mode != "q":
         if mode == "e":
+            cipher_text = ""
             plain_text = input("Enter your plain text: ").lower().replace(" ", "")
 
             not_al = False
@@ -33,7 +34,10 @@ def main():
                 continue
 
             keyword = input("Enter your keyword: ").lower().replace(" ", "")
-            cipher_text = ""
+
+            global KEY_TABLE
+            KEY_TABLE = ([], [], [], [], [])
+
             key_table_setter(keyword)
             key_table_setter(ALPHABETS)
             # print(KEY_TABLE)
@@ -52,20 +56,22 @@ def main():
                         # print(f"Second: {second_letter_row},{second_letter_column}")
                         if first_letter_column == second_letter_column:
                             # print("hello")
-                            cipher_text += same_column_encryption(
+                            cipher_text += same_column(
                                 first_letter_row,
                                 first_letter_column,
                                 second_letter_row,
                                 second_letter_column,
+                                "encrypt",
                             )
                             # print(cipher_text)
                         elif first_letter_row == second_letter_row:
                             # print("hello")
-                            cipher_text += same_row_encryption(
+                            cipher_text += same_row(
                                 first_letter_row,
                                 first_letter_column,
                                 second_letter_row,
                                 second_letter_column,
+                                "encrypt",
                             )
                             # print(cipher_text)
                         else:
@@ -95,6 +101,9 @@ def main():
                 continue
 
             keyword = input("Enter your keyword: ").lower().replace(" ", "")
+
+            KEY_TABLE = ([], [], [], [], [])
+
             key_table_setter(keyword)
             key_table_setter(ALPHABETS)
             # print(KEY_TABLE)
@@ -112,22 +121,24 @@ def main():
                         # print(f"Second: {second_letter_row},{second_letter_column}")
                         if first_letter_column == second_letter_column:
                             # print("hello")
-                            plain_text += same_column_decryption(
+                            plain_text += same_column(
                                 first_letter_row,
                                 first_letter_column,
                                 second_letter_row,
                                 second_letter_column,
+                                "decrypt",
                             )
-                            # print(plain_text)
+                            print(plain_text)
                         elif first_letter_row == second_letter_row:
                             # print("hello")
-                            plain_text += same_row_decryption(
+                            plain_text += same_row(
                                 first_letter_row,
                                 first_letter_column,
                                 second_letter_row,
                                 second_letter_column,
+                                "decrypt",
                             )
-                            # print(plain_text)
+                            print(plain_text)
                         else:
                             # print("hello")
                             plain_text += different_pos(
@@ -136,7 +147,7 @@ def main():
                                 second_letter_row,
                                 second_letter_column,
                             )
-                            # print(plain_text)
+                            print(plain_text)
 
             remove_x = input(
                 "(Not Recommended) Do you want to remove x? Yes(y) or No(n)\n"
@@ -266,12 +277,13 @@ def make_diagram(text):
                 break
             except IndexError:
                 break
+    print(diagram)
     return diagram
 
 
-def same_column_encryption(first_r, first_c, second_r, second_c):
+def same_column(first_r, first_c, second_r, second_c, crypt_mode):
     """
-    Encrypts two letters in the same column of the key table.
+    Encrypts or decrypts two letters in the same column of the key table.
 
     If the first letter is at the bottom of the column, it wraps around to the top of the column. If the second letter is at the bottom of the column, it wraps around to the top of the column.
 
@@ -285,105 +297,67 @@ def same_column_encryption(first_r, first_c, second_r, second_c):
         The row of the second letter
     second_c : int
         The column of the second letter
+    crypt_mode : str
+        The mode of operation: "encrypt" or "decrypt"
 
     Returns
     -------
     str
-        The encrypted letters
+        The encrypted or decrypted letters
     """
     cipher_part = ""
-    if first_r == 4:
+
+    en, de = 1, 1
+    if crypt_mode == "encrypt":
+        en = -1
+    elif crypt_mode == "decrypt":
+        de = -1
+
+    if (first_r == 4 and crypt_mode == "encrypt") or (
+        first_r == 0 and crypt_mode == "decrypt"
+    ):
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[first_r - 4][first_c]
-            else KEY_TABLE[first_r - 4][first_c]
+            if "i/j" in KEY_TABLE[first_r + (4 * en)][first_c]
+            else KEY_TABLE[first_r + (4 * en)][first_c]
         )
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[second_r + 1][second_c]
-            else KEY_TABLE[second_r + 1][second_c]
+            if "i/j" in KEY_TABLE[second_r + (1 * de)][second_c]
+            else KEY_TABLE[second_r + (1 * de)][second_c]
         )
-    elif second_r == 4:
+    elif (second_r == 4 and crypt_mode == "encrypt") or (
+        second_r == 0 and crypt_mode == "decrypt"
+    ):
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[first_r + 1][first_c]
-            else KEY_TABLE[first_r + 1][first_c]
+            if "i/j" in KEY_TABLE[first_r + (1 * de)][first_c]
+            else KEY_TABLE[first_r + (1 * de)][first_c]
         )
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[second_r - 4][second_c]
-            else KEY_TABLE[second_r - 4][second_c]
+            if "i/j" in KEY_TABLE[second_r + (4 * en)][second_c]
+            else KEY_TABLE[second_r + (4 * en)][second_c]
         )
     else:
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[first_r + 1][first_c]
-            else KEY_TABLE[first_r + 1][first_c]
+            if "i/j" in KEY_TABLE[first_r + (1 * de)][first_c]
+            else KEY_TABLE[first_r + (1 * de)][first_c]
         )
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[second_r + 1][second_c]
-            else KEY_TABLE[second_r + 1][second_c]
+            if "i/j" in KEY_TABLE[second_r + (1 * de)][second_c]
+            else KEY_TABLE[second_r + (1 * de)][second_c]
         )
     return cipher_part
 
 
-def same_column_decryption(first_r, first_c, second_r, second_c):
-    """
-    Decrypts two letters which are in the same column of the key table.
-
-    Parameters:
-    first_r (int): The row of the first letter
-    first_c (int): The column of the first letter
-    second_r (int): The row of the second letter
-    second_c (int): The column of the second letter
-
-    Returns:
-        The decrypted letters
-    """
-    plain_part = ""
-    if first_r == 0:
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[first_r + 4][first_c]
-            else KEY_TABLE[first_r + 4][first_c]
-        )
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[second_r - 1][second_c]
-            else KEY_TABLE[second_r - 1][second_c]
-        )
-    elif second_r == 0:
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[first_r - 1][first_c]
-            else KEY_TABLE[first_r - 1][first_c]
-        )
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[second_r + 4][second_c]
-            else KEY_TABLE[second_r + 4][second_c]
-        )
-
-    else:
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[first_r - 1][first_c]
-            else KEY_TABLE[first_r - 1][first_c]
-        )
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[second_r - 1][second_c]
-            else KEY_TABLE[second_r - 1][second_c]
-        )
-    return plain_part
-
-
-def same_row_encryption(first_r, first_c, second_r, second_c):
+def same_row(first_r, first_c, second_r, second_c, crypt_mode):
     """
     Encrypts two letters in the same row of the key table.
 
-    If the first letter is at the rightmost position of the row, it wraps around to the leftmost position of the row. If the second letter is at the rightmost position of the row, it wraps around to the leftmost position of the row.
+    If the first letter is at the end of the row, it wraps around to the start of the row. If the second letter is at the end of the row, it wraps around to the start of the row.
 
     Parameters
     ----------
@@ -395,6 +369,8 @@ def same_row_encryption(first_r, first_c, second_r, second_c):
         The row of the second letter
     second_c : int
         The column of the second letter
+    crypt_mode : str
+        The mode of operation: "encrypt" or "decrypt"
 
     Returns
     -------
@@ -402,90 +378,51 @@ def same_row_encryption(first_r, first_c, second_r, second_c):
         The encrypted letters
     """
     cipher_part = ""
-    if first_c == 4:
+
+    en, de = 1, 1
+    if crypt_mode == "encrypt":
+        en = -1
+    elif crypt_mode == "decrypt":
+        de = -1
+
+    if (first_c == 4 and crypt_mode == "encrypt") or (
+        first_c == 0 and crypt_mode == "decrypt"
+    ):
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[first_r][first_c - 4]
-            else KEY_TABLE[first_r][first_c - 4]
+            if "i/j" in KEY_TABLE[first_r][first_c + (4 * en)]
+            else KEY_TABLE[first_r][first_c + (4 * en)]
         )
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[second_r][second_c + 1]
-            else KEY_TABLE[second_r][second_c + 1]
+            if "i/j" in KEY_TABLE[second_r][second_c + (1 * de)]
+            else KEY_TABLE[second_r][second_c + (1 * de)]
         )
-    elif second_c == 4:
+    elif (second_c == 4 and crypt_mode == "encrypt") or (
+        second_c == 0 and crypt_mode == "decrypt"
+    ):
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[first_r][first_c + 1]
-            else KEY_TABLE[first_r][first_c + 1]
+            if "i/j" in KEY_TABLE[first_r][first_c + (1 * de)]
+            else KEY_TABLE[first_r][first_c + (1 * de)]
         )
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[second_r][second_c - 4]
-            else KEY_TABLE[second_r][second_c - 4]
+            if "i/j" in KEY_TABLE[second_r][second_c + (4 * en)]
+            else KEY_TABLE[second_r][second_c + (4 * en)]
         )
     else:
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[first_r][first_c + 1]
-            else KEY_TABLE[first_r][first_c + 1]
+            if "i/j" in KEY_TABLE[first_r][first_c + (1 * de)]
+            else KEY_TABLE[first_r][first_c + (1 * de)]
         )
         cipher_part += (
             "i"
-            if "i/j" in KEY_TABLE[second_r][second_c + 1]
-            else KEY_TABLE[second_r][second_c + 1]
+            if "i/j" in KEY_TABLE[second_r][second_c + (1 * de)]
+            else KEY_TABLE[second_r][second_c + (1 * de)]
         )
     return cipher_part
-
-
-def same_row_decryption(first_r, first_c, second_r, second_c):
-    """
-    Decrypts two letters which are in the same row of the key table.
-
-    Parameters:
-    first_r (int): The row of the first letter
-    first_c (int): The column of the first letter
-    second_r (int): The row of the second letter
-    second_c (int): The column of the second letter
-
-    Returns:
-        The decrypted letters
-    """
-    plain_part = ""
-    if first_c == 0:
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[first_r][first_c + 4]
-            else KEY_TABLE[first_r][first_c + 4]
-        )
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[second_r][second_c - 1]
-            else KEY_TABLE[second_r][second_c - 1]
-        )
-    elif second_c == 0:
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[first_r][first_c - 1]
-            else KEY_TABLE[first_r][first_c - 1]
-        )
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[second_r][second_c + 4]
-            else KEY_TABLE[second_r][second_c + 4]
-        )
-    else:
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[first_r][first_c - 1]
-            else KEY_TABLE[first_r][first_c - 1]
-        )
-        plain_part += (
-            "i"
-            if "i/j" in KEY_TABLE[second_r][second_c - 1]
-            else KEY_TABLE[second_r][second_c - 1]
-        )
-    return plain_part
 
 
 def different_pos(first_r, first_c, second_r, second_c):
