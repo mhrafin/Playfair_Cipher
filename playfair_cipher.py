@@ -305,7 +305,7 @@ def same_column(first_r, first_c, second_r, second_c, crypt_mode):
     str
         The encrypted or decrypted letters
     """
-    cipher_part = ""
+    part = ""
 
     en, de = 1, 1
     if crypt_mode == "encrypt":
@@ -316,12 +316,12 @@ def same_column(first_r, first_c, second_r, second_c, crypt_mode):
     if (first_r == 4 and crypt_mode == "encrypt") or (
         first_r == 0 and crypt_mode == "decrypt"
     ):
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[first_r + (4 * en)][first_c]
             else KEY_TABLE[first_r + (4 * en)][first_c]
         )
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[second_r + (1 * de)][second_c]
             else KEY_TABLE[second_r + (1 * de)][second_c]
@@ -329,28 +329,28 @@ def same_column(first_r, first_c, second_r, second_c, crypt_mode):
     elif (second_r == 4 and crypt_mode == "encrypt") or (
         second_r == 0 and crypt_mode == "decrypt"
     ):
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[first_r + (1 * de)][first_c]
             else KEY_TABLE[first_r + (1 * de)][first_c]
         )
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[second_r + (4 * en)][second_c]
             else KEY_TABLE[second_r + (4 * en)][second_c]
         )
     else:
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[first_r + (1 * de)][first_c]
             else KEY_TABLE[first_r + (1 * de)][first_c]
         )
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[second_r + (1 * de)][second_c]
             else KEY_TABLE[second_r + (1 * de)][second_c]
         )
-    return cipher_part
+    return part
 
 
 def same_row(first_r, first_c, second_r, second_c, crypt_mode):
@@ -377,7 +377,7 @@ def same_row(first_r, first_c, second_r, second_c, crypt_mode):
     str
         The encrypted letters
     """
-    cipher_part = ""
+    part = ""
 
     en, de = 1, 1
     if crypt_mode == "encrypt":
@@ -388,12 +388,12 @@ def same_row(first_r, first_c, second_r, second_c, crypt_mode):
     if (first_c == 4 and crypt_mode == "encrypt") or (
         first_c == 0 and crypt_mode == "decrypt"
     ):
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[first_r][first_c + (4 * en)]
             else KEY_TABLE[first_r][first_c + (4 * en)]
         )
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[second_r][second_c + (1 * de)]
             else KEY_TABLE[second_r][second_c + (1 * de)]
@@ -401,28 +401,28 @@ def same_row(first_r, first_c, second_r, second_c, crypt_mode):
     elif (second_c == 4 and crypt_mode == "encrypt") or (
         second_c == 0 and crypt_mode == "decrypt"
     ):
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[first_r][first_c + (1 * de)]
             else KEY_TABLE[first_r][first_c + (1 * de)]
         )
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[second_r][second_c + (4 * en)]
             else KEY_TABLE[second_r][second_c + (4 * en)]
         )
     else:
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[first_r][first_c + (1 * de)]
             else KEY_TABLE[first_r][first_c + (1 * de)]
         )
-        cipher_part += (
+        part += (
             "i"
             if "i/j" in KEY_TABLE[second_r][second_c + (1 * de)]
             else KEY_TABLE[second_r][second_c + (1 * de)]
         )
-    return cipher_part
+    return part
 
 
 def different_pos(first_r, first_c, second_r, second_c):
